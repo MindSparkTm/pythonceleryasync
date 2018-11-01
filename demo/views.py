@@ -18,21 +18,19 @@ class Requestheader(ComplexModel):
 
 
 class SoapService(ServiceBase):
-    # __in_header__ = Requestheader
+    __tns__ = 'spyne.examples.authentication'
+    __in_header__ = Requestheader
 
-    #to check if a color exists
+    # to check if a color exists
     @rpc(Unicode(nillable=False), _returns=Unicode)
     def exists(ctx, name):
-
-        # username = ctx.in_header.username
-        # password = ctx.in_header.password
-        # print('username', username, password)
+        username = ctx.in_header.username
+        password = ctx.in_header.password
+        print('username', username, password)
 
         colors = {'RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'}
 
         if name in colors:
-
-            num_results = Color.objects.filter(color_name=name).count()
 
             if Color.objects.filter(color_name=name).exists():
                 generate_logs.delay(request=name, response=True)
@@ -49,7 +47,7 @@ class SoapService(ServiceBase):
 
             return False
 
-   #to validate the color name and add it to database if doesnt exists
+    # to validate the color name and add it to database if doesnt exists
     @rpc(Unicode(nillable=False), _returns=Unicode)
     def validateandadd(ctx, name):
 
@@ -78,8 +76,6 @@ class SoapService(ServiceBase):
             return False
 
 
-
-
 soap_app = Application(
     [SoapService],
     tns='django.soap.example',
@@ -89,4 +85,3 @@ soap_app = Application(
 
 django_soap_application = DjangoApplication(soap_app)
 my_soap_application = csrf_exempt(django_soap_application)
-
