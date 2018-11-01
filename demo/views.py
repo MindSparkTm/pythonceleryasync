@@ -20,32 +20,7 @@ class Requestheader(ComplexModel):
 class SoapService(ServiceBase):
     # __in_header__ = Requestheader
 
-    @rpc(Unicode(nillable=False), _returns=Unicode)
-    def hello(ctx, name):
-
-        # username = ctx.in_header.username
-        # password = ctx.in_header.password
-        # print('username', username, password)
-
-        colors = {'RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'}
-
-        if name in colors:
-
-            colorobj, created = Color.objects.get_or_create(color_name=name)
-
-            if created:
-                generate_logs.delay(request=name, response=True)
-
-                return True
-            else:
-                generate_logs.delay(request=name, response=False)
-
-                return False
-        else:
-            generate_logs.delay(request=name, response=False)
-
-            return False
-
+    #to check if a color exists
     @rpc(Unicode(nillable=False), _returns=Unicode)
     def exists(ctx, name):
 
@@ -74,6 +49,7 @@ class SoapService(ServiceBase):
 
             return False
 
+   #to validate the color name and add it to database if doesnt exists
     @rpc(Unicode(nillable=False), _returns=Unicode)
     def validateandadd(ctx, name):
 
